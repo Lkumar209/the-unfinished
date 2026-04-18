@@ -1,3 +1,5 @@
+https://docs.google.com/document/d/1nLiYLw1zlf9u7Cav8HI6Phg-WH6bbuuVXTidnjKjonk/edit?usp=sharing
+
 # the unfinished
 
 a creative diagnostics tool for people who start things and don't finish them.
