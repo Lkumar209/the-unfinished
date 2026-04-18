@@ -3,10 +3,10 @@ from datetime import datetime, timezone
 
 from fastapi import APIRouter, HTTPException
 
-from app.models import ReentryRecord, ReentryRequest, LiteraryPrecedent, LocalPlace
+from app.models import ReentryRecord, ReentryRequest, LiteraryPrecedent
 from app.services import storage
 from app.services.claude import generate_reentry, suggest_gutendex_work, write_adaptation_note
-from app.services.gutendex import fetch_passage, PITTSBURGH_PLACES
+from app.services.gutendex import fetch_passage
 
 import uuid
 def nanoid(size=10): return uuid.uuid4().hex[:size]
@@ -62,8 +62,6 @@ def run_reentry(req: ReentryRequest):
                     adaptation_note=adaptation_note,
                 )
 
-    local_places = [LocalPlace(**p) for p in PITTSBURGH_PLACES]
-
     now = datetime.now(timezone.utc).isoformat()
     rec = ReentryRecord(
         id=f"reentry_{nanoid(8)}",
@@ -77,7 +75,6 @@ def run_reentry(req: ReentryRequest):
         why_breaks_pattern=result["why_breaks_pattern"],
         why_succeeds_even_if=result["why_succeeds_even_if"],
         literary_precedent=literary_precedent,
-        local_places=local_places,
         generated_at=now,
     )
     storage.save("reentry", rec.id, rec.model_dump())

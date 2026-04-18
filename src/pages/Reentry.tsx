@@ -210,26 +210,6 @@ export default function Reentry() {
                     </section>
                   )}
 
-                  {/* local places */}
-                  {r.local_places.length > 0 && (
-                    <section className="mt-12">
-                      <Overline className="mb-4">three places near you, this week</Overline>
-                      <div>
-                        {r.local_places.map((p, i, arr) => (
-                          <div key={p.name}
-                            className={"flex items-center justify-between gap-6 py-5 " + (i < arr.length ? "border-t-hair" : "")}>
-                            <div className="min-w-0">
-                              <div className="font-sans-ui text-[15px] font-medium lowercase text-ink">{p.name}</div>
-                              <div className="font-sans-ui text-[13px] lowercase text-ink-secondary mt-1">{p.details}</div>
-                            </div>
-                            <div className="font-mono-ui text-[14px] text-ink-tertiary shrink-0">→</div>
-                          </div>
-                        ))}
-                        <div className="border-t-hair" />
-                      </div>
-                    </section>
-                  )}
-
                   {/* footer cta */}
                   <section className="mt-12">
                     <div className="rounded-lg bg-surface-muted p-6 flex items-center justify-between gap-6 flex-wrap">

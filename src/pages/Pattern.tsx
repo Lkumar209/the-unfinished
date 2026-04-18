@@ -54,12 +54,15 @@ export default function Pattern() {
     },
   });
 
-  const rows = pattern?.per_project_dropouts ?? projects.map(p => ({
-    project_id: p.id,
-    title: p.title,
-    medium: p.medium,
-    dropout_pct: p.dropout_percent,
-  }));
+  const patternProjectIds = new Set(pattern?.per_project_dropouts.map(r => r.project_id) ?? []);
+  const patternIsStale = pattern && projects.some(p => !patternProjectIds.has(p.id));
+
+  const rows = projects.length > 0
+    ? projects.map(p => {
+        const stored = pattern?.per_project_dropouts.find(r => r.project_id === p.id);
+        return { project_id: p.id, title: p.title, medium: p.medium, dropout_pct: stored?.dropout_pct ?? p.dropout_percent };
+      })
+    : [];
 
   const dropouts = rows.map(r => r.dropout_pct);
   const minD = dropouts.length ? Math.min(...dropouts) : 32;
@@ -115,6 +118,17 @@ export default function Pattern() {
               </p>
               <BareButton onClick={() => generateMutation.mutate()}>
                 find the pattern →
+              </BareButton>
+            </div>
+          )}
+
+          {patternIsStale && !isLoading && (
+            <div className="mt-6">
+              <p className="font-serif text-[17px] leading-[1.7] text-ink-secondary max-w-[620px] mb-6">
+                {projects.length - patternProjectIds.size} new project{projects.length - patternProjectIds.size !== 1 ? "s" : ""} added since the last analysis.
+              </p>
+              <BareButton onClick={() => generateMutation.mutate()}>
+                regenerate pattern →
               </BareButton>
             </div>
           )}
