@@ -61,7 +61,6 @@ export default function Landing() {
           style={{ width: open ? "52%" : "100%", paddingTop: "12vh", paddingBottom: "12vh" }}
         >
           <div className="max-w-[680px]">
-            <Overline className="mb-8">est. 2025 · a diagnostic tool</Overline>
 
             <h1 className="font-serif text-[48px] md:text-[64px] lg:text-[72px] leading-[1.06] text-ink">
               you don't have a writer's block problem.
