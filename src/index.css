@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  the unfinished — design tokens
+  All colors HSL. Palette is intentionally tiny.
+*/
+
+@layer base {
+  :root {
+    /* page */
+    --background: 60 20% 97%;            /* #FAFAF7 warm off-white */
+    --foreground: 0 0% 10%;              /* #1A1A1A text primary */
+
+    --surface: 0 0% 100%;                /* #FFFFFF */
+    --surface-muted: 43 19% 93%;         /* #F3F1EC */
+
+    --text-primary: 0 0% 10%;            /* #1A1A1A */
+    --text-secondary: 60 3% 42%;         /* #6B6B66 */
+    --text-tertiary: 51 5% 62%;          /* #A3A29B */
+
+    --accent: 14 64% 46%;                /* #C24A2A muted rust */
+    --data: 60 4% 17%;                   /* #2C2C2A near-black */
+
+    /* shadcn token aliases (kept so any leftover primitives don't break) */
+    --card: var(--surface);
+    --card-foreground: var(--foreground);
+    --popover: var(--surface);
+    --popover-foreground: var(--foreground);
+    --primary: var(--foreground);
+    --primary-foreground: var(--background);
+    --secondary: var(--surface-muted);
+    --secondary-foreground: var(--foreground);
+    --muted: var(--surface-muted);
+    --muted-foreground: var(--text-secondary);
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 70% 40%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 0%;
+    --input: 0 0% 0%;
+    --ring: 0 0% 10%;
+
+    --radius: 0.75rem; /* 12px default; small uses 8px directly */
+  }
+}
+
+@layer base {
+  * {
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.7;
+    font-feature-settings: "kern", "liga", "onum";
+  }
+
+  /* sans for UI */
+  .font-sans-ui {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  /* mono */
+  .font-mono-ui {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  /* serif (default body already serif, but explicit when overriding) */
+  .font-serif-ui {
+    font-family: 'Source Serif 4', Georgia, serif;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+
+  /* hairline borders */
+  .border-hair {
+    border-width: 0.5px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+  .border-hair-emph {
+    border-width: 0.5px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.16);
+  }
+  .border-b-hair {
+    border-bottom-width: 0.5px;
+    border-bottom-style: solid;
+    border-bottom-color: rgba(0, 0, 0, 0.08);
+  }
+  .border-t-hair {
+    border-top-width: 0.5px;
+    border-top-style: solid;
+    border-top-color: rgba(0, 0, 0, 0.08);
+  }
+  .border-l-hair {
+    border-left-width: 0.5px;
+    border-left-style: solid;
+    border-left-color: rgba(0, 0, 0, 0.08);
+  }
+
+  ::selection {
+    background: rgba(194, 74, 42, 0.15);
+    color: hsl(var(--foreground));
+  }
+}
+
+@layer utilities {
+  .fade-in {
+    animation: fadeIn 300ms ease-out both;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+}
