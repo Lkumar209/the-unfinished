@@ -90,6 +90,21 @@ export default function Landing() {
           </div>
         </div>
 
+        {/* scroll hint */}
+        {!open && (
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none"
+            style={{ opacity: 0.4 }}>
+            <span className="font-mono-ui text-[10px] lowercase tracking-widest text-ink-tertiary">scroll</span>
+            <svg
+              width="12" height="18" viewBox="0 0 12 18" fill="none"
+              className="text-ink-tertiary animate-bounce"
+              style={{ animationDuration: "1.8s" }}
+            >
+              <path d="M6 1v10M6 11l-4-4M6 11l4-4" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+        )}
+
         {/* right — upload panel */}
         <div
           className="absolute right-0 top-0 h-full flex flex-col justify-center px-12 transition-all duration-500 ease-in-out overflow-y-auto"
