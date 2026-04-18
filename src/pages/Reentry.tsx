@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { LeftRail } from "@/components/LeftRail";
 import { Overline } from "@/components/Overline";
@@ -8,13 +8,21 @@ import { api } from "@/lib/api";
 
 export default function Reentry() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const qc = useQueryClient();
 
-  const { data: project } = useQuery({
+  const { data: project, isError: projectMissing } = useQuery({
     queryKey: ["project", id],
     queryFn: () => api.getProject(id!),
     enabled: !!id,
+    retry: false,
   });
+
+  const { data: allProjects } = useQuery({
+    queryKey: ["projects"],
+    queryFn: () => api.listProjects(),
+  });
+  const projects = allProjects?.projects ?? [];
 
   const { data: pattern } = useQuery({
     queryKey: ["pattern/latest"],
@@ -35,12 +43,12 @@ export default function Reentry() {
 
   const reentry = generateMutation.data ?? qc.getQueryData<ReturnType<typeof generateMutation.mutate>>(["reentry", id]);
 
-  // auto-trigger if pattern is available
+  // auto-trigger only if both project and pattern are confirmed to exist
   useEffect(() => {
-    if (pattern && id && !generateMutation.isPending && !generateMutation.isSuccess && !generateMutation.isError) {
+    if (pattern && id && project && !generateMutation.isPending && !generateMutation.isSuccess && !generateMutation.isError) {
       generateMutation.mutate();
     }
-  }, [pattern, id]);
+  }, [pattern, id, project]);
 
   const title = project?.title ?? "untitled";
 
@@ -66,6 +74,28 @@ export default function Reentry() {
                 </p>
                 <div className="mt-4">
                   <BareButton to="/pattern">go to pattern →</BareButton>
+                </div>
+              </div>
+            )}
+
+            {pattern && projectMissing && projects.length > 0 && (
+              <div className="mt-12">
+                <p className="font-serif text-[17px] text-ink-secondary mb-6">
+                  pick a project to revive:
+                </p>
+                <div>
+                  {projects.map((p) => (
+                    <button
+                      key={p.id}
+                      onClick={() => navigate(`/reentry/${p.id}`)}
+                      className="w-full flex items-center gap-4 py-4 border-t-hair text-left hover:bg-surface-muted transition-colors duration-200 px-2 -mx-2 rounded"
+                    >
+                      <span className="font-mono-ui text-[11px] text-ink-tertiary w-[80px] shrink-0">{p.medium}</span>
+                      <span className="font-serif text-[17px] text-ink flex-1">{p.title}</span>
+                      <span className="font-mono-ui text-[11px] text-accent shrink-0">{p.dropout_percent}%</span>
+                    </button>
+                  ))}
+                  <div className="border-t-hair" />
                 </div>
               </div>
             )}

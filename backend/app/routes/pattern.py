@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException
 
 from app.models import PatternRecord, PatternRequest, PerProjectDropout
 from app.services import storage
-from app.services.claude import generate_pattern
+from app.services.claude import generate_pattern, generate_autopsy
 
 import uuid
 def nanoid(size=10): return uuid.uuid4().hex[:size]
@@ -23,21 +23,23 @@ def run_pattern(req: PatternRequest):
             raise HTTPException(404, f"project {pid} not found")
         projects.append(p)
 
-    # all must have autopsies
+    # auto-generate any missing autopsies
     autopsies = []
-    missing = []
     for p in projects:
         a = storage.load("autopsies", p["id"])
         if not a and p.get("pre_computed_autopsy"):
             a = p["pre_computed_autopsy"]
             a["project_id"] = p["id"]
         if not a:
-            missing.append(p["id"])
-        else:
-            autopsies.append(a)
-
-    if missing:
-        raise HTTPException(422, f"autopsy not generated for: {', '.join(missing)}")
+            result = generate_autopsy(p)
+            a = {
+                "project_id": p["id"],
+                "cause_of_death": result["cause_of_death"],
+                "diagnosis_prose": result["diagnosis_prose"],
+                "generated_at": datetime.now(timezone.utc).isoformat(),
+            }
+            storage.save("autopsies", p["id"], a)
+        autopsies.append(a)
 
     result = generate_pattern(projects, autopsies)
 
