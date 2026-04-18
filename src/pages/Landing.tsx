@@ -47,8 +47,20 @@ export default function Landing() {
     }
   };
 
+  const ACCEPTED_EXTS = new Set([".txt",".docx",".pdf",".fdx",".mp3",".wav",".jpg",".jpeg",".png"]);
+  const [fileTypeError, setFileTypeError] = useState<string | null>(null);
+
   const handleFiles = (files: FileList | null) => {
     if (!files || files.length === 0) return;
+    const invalid = Array.from(files).filter(f => {
+      const ext = "." + f.name.split(".").pop()?.toLowerCase();
+      return !ACCEPTED_EXTS.has(ext);
+    });
+    if (invalid.length > 0) {
+      setFileTypeError(`unsupported file type: ${invalid.map(f => f.name).join(", ")} — accepted formats: .docx · .pdf · .fdx · .txt · .mp3 · .wav · .jpg · .png`);
+      return;
+    }
+    setFileTypeError(null);
     upload.mutate(Array.from(files));
   };
 
@@ -195,9 +207,9 @@ export default function Landing() {
               onChange={(e) => handleFiles(e.target.files)}
             />
 
-            {upload.isError && (
+            {(fileTypeError || upload.isError) && (
               <p className="mt-3 font-sans-ui text-[12px] text-accent">
-                {upload.error?.message}
+                {fileTypeError ?? "upload failed — please try again"}
               </p>
             )}
 

@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { BareButton } from "@/components/BareButton";
@@ -34,8 +35,20 @@ export default function Upload() {
     },
   });
 
+  const ACCEPTED_EXTS = new Set([".txt",".docx",".pdf",".fdx",".mp3",".wav",".jpg",".jpeg",".png"]);
+  const [fileTypeError, setFileTypeError] = useState<string | null>(null);
+
   const handleFiles = (files: FileList | null) => {
     if (!files || files.length === 0) return;
+    const invalid = Array.from(files).filter(f => {
+      const ext = "." + f.name.split(".").pop()?.toLowerCase();
+      return !ACCEPTED_EXTS.has(ext);
+    });
+    if (invalid.length > 0) {
+      setFileTypeError(`unsupported file type: ${invalid.map(f => f.name).join(", ")} — accepted formats: .docx · .pdf · .fdx · .txt · .mp3 · .wav · .jpg · .png`);
+      return;
+    }
+    setFileTypeError(null);
     upload.mutate(Array.from(files));
   };
 
@@ -103,9 +116,9 @@ export default function Upload() {
             onChange={(e) => handleFiles(e.target.files)}
           />
 
-          {upload.isError && (
+          {(fileTypeError || upload.isError) && (
             <p className="mt-4 font-sans-ui text-[13px] text-accent">
-              upload failed: {upload.error?.message}
+              {fileTypeError ?? "upload failed — please try again"}
             </p>
           )}
 
