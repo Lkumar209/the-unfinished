@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Overline } from "@/components/Overline";
@@ -29,6 +29,23 @@ export default function Landing() {
     mutationFn: (id: string) => api.deleteProject(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["projects"] }),
   });
+
+  const belowFoldRef = useRef<HTMLDivElement>(null);
+  const [scrolledDown, setScrolledDown] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolledDown(window.scrollY > 80);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const handleScrollToggle = () => {
+    if (scrolledDown) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      belowFoldRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   const handleFiles = (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -92,17 +109,28 @@ export default function Landing() {
 
         {/* scroll hint */}
         {!open && (
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none"
-            style={{ opacity: 0.4 }}>
-            <span className="font-mono-ui text-[10px] lowercase tracking-widest text-ink-tertiary">scroll</span>
-            <svg
-              width="12" height="18" viewBox="0 0 12 18" fill="none"
-              className="text-ink-tertiary animate-bounce"
-              style={{ animationDuration: "1.8s" }}
+          <button
+            onClick={handleScrollToggle}
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 cursor-pointer group transition-opacity duration-300 hover:opacity-100"
+            style={{ opacity: 0.55 }}
+            aria-label={scrolledDown ? "scroll to top" : "scroll down"}
+          >
+            <span className="font-mono-ui text-[11px] lowercase tracking-widest text-ink-secondary group-hover:text-ink transition-colors duration-200">
+              {scrolledDown ? "back to top" : "how it works ↓"}
+            </span>
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110"
+              style={{ border: "0.5px solid rgba(0,0,0,0.2)", background: "rgba(255,255,255,0.6)" }}
             >
-              <path d="M6 1v10M6 11l-4-4M6 11l4-4" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
+              <svg
+                width="12" height="12" viewBox="0 0 12 12" fill="none"
+                className={`text-ink-secondary transition-transform duration-300 ${scrolledDown ? "rotate-180" : "animate-bounce"}`}
+                style={{ animationDuration: "1.6s" }}
+              >
+                <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          </button>
         )}
 
         {/* right — upload panel */}
@@ -236,6 +264,7 @@ export default function Landing() {
 
       {/* below-fold — collapses when panel opens */}
       <div
+        ref={belowFoldRef}
         className="transition-all duration-500 overflow-hidden"
         style={{ maxHeight: open ? "0px" : "800px", opacity: open ? 0 : 1 }}
       >
