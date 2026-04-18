@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /Users/suchir/Downloads/the-unfinished-main pull)",
+      "Bash(git init *)",
+      "Bash(git remote *)",
+      "Bash(git fetch *)",
+      "Bash(git reset *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(git config *)"
+    ]
+  }
+}
