@@ -309,7 +309,7 @@ export default function Landing() {
         <footer className="border-t-hair">
           <div className="max-w-dash mx-auto px-6 md:px-20 py-10 font-mono-ui text-[12px] text-ink-tertiary leading-[1.9]">
             <div>the unfinished — a creative diagnostics project</div>
-            <div>built at cmu · 2025</div>
+            <div>built at cmu · 2026</div>
           </div>
         </footer>
       </div>
